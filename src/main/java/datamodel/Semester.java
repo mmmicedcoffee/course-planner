@@ -14,6 +14,15 @@ public class Semester {
         courses.add(course);
     }
 
+    public boolean hasConflict(Course course) {
+        for (Course c : courses) {
+            if (course.getPrerequisites().contains(c) || c.getPrerequisites().contains(course)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int getSize() {
         return courses.size();
     }

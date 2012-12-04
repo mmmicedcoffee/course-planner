@@ -1,3 +1,5 @@
+package scheduler;
+
 import datamodel.Course;
 import datamodel.Semester;
 
@@ -17,6 +19,13 @@ public class Schedule {
         this.targetCourse = targetCourse;
         this.semesters = new Semester[numSemesters];
         this.sortedCourses = newArrayList();
+        initSemesters(numSemesters);
+    }
+
+    private void initSemesters(int numSemesters) {
+        for (int i = 0; i < numSemesters; i++) {
+            semesters[i] = new Semester(new ArrayList<Course>());
+        }
     }
 
     public void sortDependencies() {
@@ -38,11 +47,23 @@ public class Schedule {
     }
 
     public void organizeSemesters() {
+        assert(!sortedCourses.isEmpty());
 
+        for (Course course : sortedCourses) {
+            int semesterCount = 0;
+            while (semesters[semesterCount].hasConflict(course)) {
+                semesterCount++;
+            }
+            semesters[semesterCount].addCourse(course);
+        }
     }
 
     public Course getTargetCourse() {
         return targetCourse;
+    }
+
+    public Semester getSemester(int semesterNum) {
+        return semesters[semesterNum];
     }
 
     public Semester[] getSemesters() {

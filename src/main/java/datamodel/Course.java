@@ -1,12 +1,12 @@
 package datamodel;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Course {
     private final String name;
-    private final ArrayList<Course> prerequisites;
+    private final HashSet<Course> prerequisites;
 
-    public Course(String name, ArrayList<Course> prerequisites) {
+    public Course(String name, HashSet<Course> prerequisites) {
         this.name = name;
         this.prerequisites = prerequisites;
     }
@@ -15,7 +15,7 @@ public class Course {
         return name;
     }
 
-    public ArrayList<Course> getPrerequisites() {
+    public HashSet<Course> getPrerequisites() {
         return prerequisites;
     }
 }
