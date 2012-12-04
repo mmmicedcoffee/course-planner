@@ -4,11 +4,9 @@ import datamodel.Course;
 import datamodel.Semester;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Stack;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Sets.newHashSet;
 
 public class Schedule {
     private final Course targetCourse;
@@ -31,27 +29,37 @@ public class Schedule {
     public void sortDependencies() {
         sortedCourses.clear();
         final Stack<Course> agenda = new Stack<Course>();
-        final HashSet<Course> visited = newHashSet();
+        final Stack<Course> finished = new Stack<Course>();
 
         agenda.push(targetCourse);
-        while (agenda.size() != 0) {
-            final Course current = agenda.pop();
-            assert(!visited.contains(current));
-            visited.add(current);
-            sortedCourses.add(0, current);   // add to front
+        targetCourse.setVisited(true);
 
-            for (Course prereq : current.getPrerequisites()) {
+        // dfs
+        while (!agenda.isEmpty()) {
+            // TODO: need some kind of cycle detection!
+            final Course current = agenda.peek();
+            final Course prereq = current.getNextUnvisitedPrereq();
+            if (prereq != null) {
+                prereq.setVisited(true);
                 agenda.push(prereq);
+            } else {
+                finished.push(agenda.pop());
+
             }
+        }
+
+        // topo sort by reversing the dfs order
+        while (!finished.isEmpty()) {
+            sortedCourses.add(0, finished.pop());
         }
     }
 
     public void organizeSemesters() {
         assert(!sortedCourses.isEmpty());
 
+        int semesterCount = 0;
         for (Course course : sortedCourses) {
-            int semesterCount = 0;
-            while (semesters[semesterCount].hasConflict(course)) {
+            while (semesters[semesterCount].hasImmediateConflict(course)) {
                 semesterCount++;
             }
             semesters[semesterCount].addCourse(course);
@@ -72,5 +80,20 @@ public class Schedule {
 
     public ArrayList<Course> getSortedCourses() {
         return sortedCourses;
+    }
+
+    @Override
+    public String toString() {
+        String scheduleString = "MY LOVELY SCHEDULE\n";
+        for (Semester s : semesters) {
+            if (s.getSize() == 0) {
+                break;
+            }
+            scheduleString += "-----\n";
+            for (Course c : s.getCourses()) {
+                scheduleString += c.toString();
+            }
+        }
+        return scheduleString;
     }
 }

@@ -36,7 +36,7 @@ public class SemesterTest {
         final Course course = new Course(ModelFactory.NAME, newHashSet(prereq));
 
         semester.addCourse(prereq);
-        assertTrue(semester.hasConflict(course));
+        assertTrue(semester.hasImmediateConflict(course));
     }
 
     @Test

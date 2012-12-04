@@ -14,7 +14,7 @@ public class Semester {
         courses.add(course);
     }
 
-    public boolean hasConflict(Course course) {
+    public boolean hasImmediateConflict(Course course) {
         for (Course c : courses) {
             if (course.getPrerequisites().contains(c) || c.getPrerequisites().contains(course)) {
                 return true;
